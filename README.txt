@@ -1,3 +1,22 @@
+KhetDristi – Hold a Lens Over Your Farm
+
+Project description
+
+Live Website
+
+https://myproject-jqla.onrender.com
+
+Technologies Used
+- HTML
+- CSS
+- JavaScript
+Features
+- Multilingual support
+- Farm health monitoring
+- Photo-based crop analysis
+- Leaf diagnosis demo
+- Farm input savings calculator
+
 KhetDristi - Hosting Guide
 ==========================
 Ye ek single-page static site hai. Koi server, database ya build step nahi chahiye.
