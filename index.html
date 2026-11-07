@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2715%27 fill=%27%23C98200%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%278%27 fill=%27%23C0392B%27/%3E%3C/svg%3E">
+<meta name="description" content="KhetDristi: hold a lens over your farm. Crop health, leaf scan and savings for farmers in English, Hindi and Marathi.">
+<title>KhetDristi: hold a lens over your farm</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Hind:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#DCE2CC;--ink:#2B1B14;--mute:#6a5a4c;--card:#EBEEDD;--line:#b9bfa4;--sun:#C98200;--chilli:#C0392B;--leaf:#3F7F26;--onSun:#2B1B14;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#241812;--ink:#EFE6D2;--mute:#b3a48f;--card:#2f2119;--line:#4a372b;--sun:#F2A900;--chilli:#E0553F;--leaf:#79B552}}
+:root[data-theme="dark"]{--bg:#241812;--ink:#EFE6D2;--mute:#b3a48f;--card:#2f2119;--line:#4a372b;--sun:#F2A900;--chilli:#E0553F;--leaf:#79B552}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 Hind,system-ui,sans-serif;overflow-x:hidden}
+h1,h2,h3{font-family:'Bricolage Grotesque',Hind,sans-serif;margin:0;line-height:1;letter-spacing:-.025em}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 0;gap:12px;flex-wrap:wrap}
+.logo{font:800 23px 'Bricolage Grotesque';display:flex;gap:9px;align-items:center}
+.logo i{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle,var(--chilli) 0 30%,var(--sun) 32%)}
+.seg{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:3px}
+.seg button{border:0;background:none;color:var(--mute);font:500 15px Hind;padding:5px 14px;border-radius:99px;cursor:pointer;transition:.25s}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+button:focus-visible,input:focus-visible,label:focus-within{outline:3px solid var(--sun);outline-offset:2px}
+h1{font-size:clamp(44px,8.4vw,112px);font-weight:800;max-width:11ch;padding:18px 0 12px}
+.sub{max-width:52ch;color:var(--mute);font-size:19px;margin:0 0 26px}
+.stage{position:relative;border-radius:30px;overflow:hidden;height:min(66vh,560px);min-height:360px;background:#3a2a1e;cursor:none;box-shadow:0 30px 60px -30px #000}
+canvas{display:block;width:100%;height:100%;touch-action:pan-y}
+.cap{position:absolute;left:16px;bottom:14px;background:rgba(36,24,18,.8);color:#EFE6D2;border-radius:99px;padding:6px 14px;font-size:14px;transition:opacity .5s}
+.key{position:absolute;right:16px;top:14px;display:flex;gap:6px;align-items:center;background:rgba(36,24,18,.8);color:#EFE6D2;border-radius:99px;padding:6px 14px;font-size:13px}
+.key i{width:90px;height:7px;border-radius:5px;background:linear-gradient(90deg,#C0392B,#F2A900,#B8D44A,#2f8a3a,#14602f)}
+.panel{display:grid;grid-template-columns:1.2fr 1fr;gap:30px;padding:26px 0 70px;align-items:start}
+.panel h3{font-size:34px;margin-bottom:8px}.panel p{margin:8px 0;max-width:56ch;animation:in .45s}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.tag{display:inline-block;padding:2px 12px;border-radius:99px;color:#fff;font-size:14px;vertical-align:middle;margin-left:8px}
+.btn{border:0;background:var(--sun);color:var(--onSun);font:600 16px Hind;padding:11px 22px;border-radius:99px;cursor:pointer;margin:6px 8px 0 0;transition:transform .2s}
+.btn:hover{transform:translateY(-3px) rotate(-1deg)}.btn.o{background:none;border:1.5px solid var(--ink);color:var(--ink)}
+.mute{color:var(--mute);font-size:14px}
+section{border-top:1px solid var(--line);padding:72px 0}
+h2{font-size:clamp(32px,5vw,60px);max-width:16ch}.lead{max-width:56ch;color:var(--mute);margin:14px 0 30px}
+.lab{display:grid;grid-template-columns:1.3fr 1fr;gap:30px}
+.drop{display:block;border:2px dashed var(--line);border-radius:22px;padding:14px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s}
+.drop:hover,.drop.h{border-color:var(--sun);background:var(--card)}
+.drop input{display:none}
+#out{width:100%;border-radius:16px;margin-top:12px;background:var(--card);aspect-ratio:4/3}
+.res{background:var(--card);border-radius:24px;padding:22px;min-height:260px}
+.res h3{font-size:28px}
+.bars{display:flex;height:16px;border-radius:9px;overflow:hidden;margin:14px 0 6px;background:var(--line)}
+.bars i{display:block;height:100%;width:0;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.row{display:grid;grid-template-columns:90px 1fr 120px;gap:12px;align-items:center;padding:14px 0;border-bottom:1px dashed var(--line)}
+.row b{font:800 22px 'Bricolage Grotesque'}.msg{font-size:15px;color:var(--ink);line-height:1.5;white-space:normal;overflow-wrap:anywhere;word-break:normal;margin-bottom:2px}.msg[lang=hi],.msg[lang=mr]{font-size:16px;font-family:Hind,'Noto Sans Devanagari','Mangal',system-ui,sans-serif}:lang(hi) h1,:lang(hi) h2,:lang(hi) h3,:lang(mr) h1,:lang(mr) h2,:lang(mr) h3{letter-spacing:0;line-height:1.2}.priv{margin:12px 0 0;font-size:13px;color:var(--mute)}.priv:before{content:'\1F512  '}
+.seg-bar{display:flex;gap:3px;flex-wrap:wrap}.seg-bar i{width:22px;height:30px;border-radius:5px;background:var(--sun);display:block;animation:in .4s backwards}
+.big{font:800 40px 'Bricolage Grotesque'}
+footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--mute);font-size:14px}
+.conn{display:inline-flex;align-items:center;gap:8px;margin-top:10px;border:1px solid var(--line);background:var(--card);border-radius:99px;padding:4px 12px}
+.conn b{width:8px;height:8px;border-radius:50%;background:var(--leaf);display:block}
+.two{display:grid;grid-template-columns:330px 1fr;gap:50px;align-items:center}
+.phone{width:290px;margin:0 auto;background:#1b1410;border-radius:38px 38px 56px 56px;padding:20px 18px 26px;box-shadow:0 24px 50px -24px #000}
+.phone:before{content:"";display:block;width:46px;height:5px;background:#4a372b;border-radius:5px;margin:0 auto 12px}
+.scr{height:340px;background:#D6DEB8;border-radius:10px;padding:12px;color:#2B1B14;font-size:15px;line-height:1.35;overflow:hidden;display:flex;flex-direction:column;gap:8px}
+.scr.in{animation:sl .45s}@keyframes sl{from{opacity:0;transform:translateX(30px)}}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:14px}.keys i{height:22px;border-radius:7px;background:#3a2a1e}
+.bub{max-width:88%;padding:8px 11px;border-radius:12px;animation:sl .35s;background:#fff;align-self:flex-start}.bub.me{align-self:flex-end;background:#a8d58f}.bub.sm{border-radius:4px;background:#eef2dc;border:1px solid #9fb084}
+.wave{display:flex;gap:4px;align-items:center;justify-content:center;height:70px}.wave i{width:6px;height:10px;background:#C0392B;border-radius:4px;animation:wv .9s ease-in-out infinite}.wave.off i{animation:none}@keyframes wv{50%{height:56px}}
+.dots span{display:inline-block;width:6px;height:6px;margin:0 2px;border-radius:50%;background:#6a5a4c;animation:dt 1s infinite}.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}@keyframes dt{50%{transform:translateY(-5px)}}
+.ctrl{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:0 0 18px}
+.card{background:var(--card);border-radius:24px;padding:22px}
+.scn,.calc{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.leafs{display:flex;gap:10px;margin-bottom:14px}.leafs button{flex:1;border:1.5px solid var(--line);background:none;border-radius:16px;padding:8px 4px;cursor:pointer;color:var(--ink);font:500 14px Hind;transition:.2s}.leafs button[aria-pressed=true]{border-color:var(--sun);transform:translateY(-3px)}
+.lstage{position:relative;height:230px;border-radius:16px;background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--sun) 20%,var(--card)),var(--card));display:grid;place-items:center;overflow:hidden;margin-bottom:16px}
+.lstage svg{width:170px;transition:transform .5s}.lstage.go svg{transform:scale(1.06) rotate(-2deg)}
+.beam{position:absolute;left:0;right:0;height:3px;background:var(--sun);box-shadow:0 0 18px 4px var(--sun);top:-4px;opacity:0}.lstage.go .beam{animation:bm 1.4s ease-in-out forwards}@keyframes bm{0%{top:0;opacity:1}100%{top:100%;opacity:1}}
+.sres{min-height:250px}.sres h3{font-size:30px;margin:4px 0 8px}
+.cbar{height:10px;border-radius:9px;background:var(--line);overflow:hidden;margin:6px 0 14px}.cbar i{display:block;height:100%;width:0;background:var(--leaf);transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.tgl{display:inline-flex;align-items:center;gap:10px;font-weight:500;cursor:pointer}.tgl input{appearance:none;width:46px;height:26px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;transition:.25s;margin:0}.tgl input:before{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--card);transition:transform .25s}.tgl input:checked{background:var(--leaf)}.tgl input:checked:before{transform:translateX(20px)}
+input[type=range]{width:100%;accent-color:var(--sun)}select{font:500 16px Hind;padding:8px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
+.bigv{font:800 clamp(48px,8vw,92px) 'Bricolage Grotesque';color:var(--sun);line-height:1}
+.flow{display:flex;flex-wrap:wrap}.flow div{flex:1 1 170px;padding:16px 16px 16px 0;border-top:4px solid var(--line);transition:.4s;color:var(--mute)}.flow div.on{border-color:var(--sun);color:var(--ink)}.flow b{display:block;font:800 18px 'Bricolage Grotesque'}
+@media(max-width:820px){.panel,.lab,.two,.scn,.calc{grid-template-columns:1fr}.row{grid-template-columns:1fr}.stage{cursor:crosshair}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+</style></head><body>
+<div class="wrap">
+<header><div class="logo"><i></i>KhetDristi</div>
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span class="mute" data-i="choose">Choose your language</span><div class="seg" role="group" aria-label="Language"><button data-l="en" aria-pressed="true">English</button><button data-l="hi" aria-pressed="false">हिंदी</button><button data-l="mr" aria-pressed="false">मराठी</button></div></div></header>
+<h1 data-i="h1">Hold a lens over your farm.</h1>
+<p class="sub" data-i="sub">Outside the circle, your fields as the eye sees them. Inside, the same fields as a satellite reads plant health. Tap a parcel and KhetDristi tells you what to do, out loud, in your language.</p>
+<div class="stage" id="stage"><canvas id="cv" aria-label="Interactive farm map. Tap a parcel for advice."></canvas>
+<div class="cap" id="cap" data-i="cap">Move the lens. Tap a parcel.</div><div class="key"><span data-i="stressed">stressed</span> <i></i> <span data-i="healthy">healthy</span></div></div>
+<div class="panel"><div id="pin"></div><div id="act"></div></div>
+</div>
+
+<section id="phone"><div class="wrap"><h2 data-i="ph_h">The advice arrives on any phone</h2>
+<p class="lead" data-i="ph_lead">The parcel you pinned on the map, delivered the way the farmer already communicates. Switch channel or language, then replay.</p>
+<div class="two"><div class="phone"><div class="scr" id="scr"></div><div class="keys"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+<div><div class="ctrl"><div class="seg" role="group" aria-label="Channel"><button data-c="ivr" aria-pressed="true" data-i="ch_ivr">Voice call</button><button data-c="sms" aria-pressed="false" data-i="ch_sms">SMS</button><button data-c="wa" aria-pressed="false" data-i="ch_wa">WhatsApp</button></div><button class="btn" id="play" data-i="replay">Replay</button></div><p class="mute" id="pnote"></p></div></div></div></section>
+
+<section><div class="wrap"><h2 data-i="pf_h">Try it on a real photo</h2>
+<p class="lead" data-i="pf_lead">This is real computation, not a mock-up. Your photo is analysed in this browser using a greenness index (Excess Green) on each block. Nothing is uploaded, so it works the same with no network.</p>
+<div class="lab"><div>
+<label class="drop" id="drop"><input type="file" accept="image/*" id="file"><b data-i="pf_choose">Choose a field or leaf photo</b><br><span class="mute" data-i="pf_drop">or drop one here</span></label>
+<p class="priv" data-priv="photo"></p>
+<button class="btn o" id="sample" data-i="pf_sample">Use a sample field instead</button>
+<canvas id="out" width="640" height="480"></canvas></div>
+<div class="res" id="res"><p class="mute" data-i="pf_empty">Results appear here after you pick a photo. Best with a top-down or wide shot of crop rows.</p></div></div></div></section>
+
+<section id="scanner"><div class="wrap"><h2 data-i="lf_h">Diagnose a leaf with no signal</h2>
+<p class="lead" data-i="lf_lead">The scanner runs on a low-cost device at a Common Service Centre. Pick a sample and scan with the network switched off.</p>
+<div class="scn"><div class="card"><div class="leafs" id="leafs"></div><div class="lstage" id="lstage"><div class="beam"></div><svg id="leaf" viewBox="0 0 120 160" aria-hidden="true"></svg></div>
+<div class="ctrl"><label class="tgl"><input type="checkbox" id="off" checked> <span data-i="lf_off">Network off</span></label><button class="btn" id="scanBtn" data-i="lf_scan">Scan leaf</button></div>
+<p class="priv" data-priv="leaf"></p></div>
+<div class="card sres" id="sres"><p class="mute" data-i="lf_empty">Results appear here. Simulated output for this demo, not a real diagnosis.</p></div></div></div></section>
+
+<section><div class="wrap"><h2 data-i="sm_h">What this advice costs by SMS</h2>
+<p class="lead" data-i="sm_lead">A feature phone gets one text of 160 plain characters. Hindi and Marathi switch to a different encoding with only 70 per message, so the same advice costs more. This is why KhetDristi also speaks.</p>
+<div id="sms"></div></div></section>
+<section id="savings"><div class="wrap"><h2 data-i="sv_h">What precise inputs could save</h2>
+<p class="lead" data-i="sv_lead">An illustration of the 15–20% input-cost target. Per-acre costs are rough assumptions, not measured results.</p>
+<div class="calc"><div class="card"><div class="ctrl"><select id="crop" aria-label="Crop"><option value="paddy">Paddy</option><option value="cotton">Cotton</option><option value="soybean">Soybean</option><option value="wheat">Wheat</option></select></div><label for="ac"><span data-i="sv_size">Farm size:</span> <b id="acv">4</b> <span data-i="sv_acres">acres</span></label><input type="range" id="ac" min="1" max="12" value="4"><p class="mute" data-i="sv_note">Seasonal spend on fertiliser, pesticide and extra irrigation.</p></div>
+<div><div class="mute" data-i="sv_per">Possible saving per season</div><div class="bigv" id="sv">₹0</div><div class="mute" id="rng"></div></div></div></div></section>
+
+<section><div class="wrap"><h2 data-i="fl_h">How one answer is made</h2><p class="lead"> </p>
+<div class="flow" id="flow"><div><b>1. Farmer reaches out</b>Call, SMS or WhatsApp</div><div><b>2. Gateway</b>Voice and chat via Twilio or Exotel</div><div><b>3. Two checks</b>Offline leaf scan and Sentinel-2 NDVI</div><div><b>4. Zone engine</b>Combines both with weather and soil</div><div><b>5. Reply</b>In the farmer's language, same thread</div></div></div></section>
+
+<footer><div class="wrap"><span data-i="foot">Team Neuronerds, A. P. Shah Institute of Technology. PCCOE International Grand Challenge 2026, AI for Climate Change. Farm map and sample photo are generated, advice rules are illustrative.</span><br><span class="conn"><b></b><span id="conn">Frontend connected to KhetAPI. 0 calls so far.</span></span></div></footer>
+
+<!-- ============ BACKEND ENGINE (KhetAPI) ============ -->
+<script id="engine">
+(function(){
+var LANGS=['en','hi','mr'];
+var ADVICE={en:{low:"This patch is stressed. Likely nitrogen shortage. Apply 20 kg urea per acre within 3 days. Do not spray pesticide.",mid:"Crop here is growing slower than its neighbours. Irrigate lightly tomorrow morning. No extra fertiliser needed.",high:"Crop is healthy. No fertiliser or spray needed this week. Next check in 5 days."},
+hi:{low:"इस हिस्से में फसल कमज़ोर है। शायद नाइट्रोजन की कमी है। 3 दिन में प्रति एकड़ 20 किलो यूरिया डालें। कीटनाशक न छिड़कें।",mid:"यहाँ फसल पड़ोस से धीमी बढ़ रही है। कल सुबह हल्की सिंचाई करें। अतिरिक्त खाद की ज़रूरत नहीं।",high:"फसल स्वस्थ है। इस हफ़्ते खाद या स्प्रे की ज़रूरत नहीं। 5 दिन बाद फिर जाँच होगी।"},
+mr:{low:"या भागात पीक कमकुवत आहे. नायट्रोजनची कमतरता असू शकते. ३ दिवसांत एकरी २० किलो युरिया द्या. कीटकनाशक फवारू नका.",mid:"इथे पीक शेजारपेक्षा हळू वाढत आहे. उद्या सकाळी हलके पाणी द्या. जास्तीचे खत नको.",high:"पीक निरोगी आहे. या आठवड्यात खत किंवा फवारणीची गरज नाही. ५ दिवसांनी पुन्हा तपासणी."}};
+var STATUS={en:{low:'Needs action',mid:'Watch',high:'Healthy'},hi:{low:'कार्रवाई करें',mid:'नज़र रखें',high:'स्वस्थ'},mr:{low:'कृती करा',mid:'लक्ष ठेवा',high:'निरोगी'}};
+var PW={en:'Parcel',hi:'खेत',mr:'शेत'};
+var NOTFOUND={en:'We could not find that parcel. Send a parcel code like A1.',hi:'वह खेत नहीं मिला। A1 जैसा खेत कोड भेजें।',mr:'ते शेत सापडले नाही. A1 सारखा शेत कोड पाठवा.'};
+var MENU={en:'Welcome to KhetDristi. Send a parcel code like A1 to get advice.',hi:'खेतदृष्टि में स्वागत है। सलाह के लिए A1 जैसा खेत कोड भेजें।',mr:'खेतदृष्टीमध्ये स्वागत. सल्ल्यासाठी A1 सारखा शेत कोड पाठवा.'};
+var VOICE={en:'en-IN',hi:'hi-IN',mr:'hi-IN'};
+var band=function(v){return v<.35?'low':v<.6?'mid':'high'};
+function adviceFor(v,lang){var l=ADVICE[lang]?lang:'en',k=band(v);return{band:k,status:STATUS[l][k],text:ADVICE[l][k],lang:l}}
+function parcelMessage(p,lang,withNdvi){var l=ADVICE[lang]?lang:'en';return PW[l]+' '+p.id+(withNdvi?' (NDVI '+p.ndvi.toFixed(2)+')':'')+'. '+adviceFor(p.ndvi,l).text}
+
+var BASIC='@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞ\u001bÆæßÉ !"#¤%&\'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà';
+var EXT='^{}\\[~]|€\f';
+function smsInfo(text){var n=0,gsm=true,ch;for(ch of text){if(BASIC.indexOf(ch)>=0)n+=1;else if(EXT.indexOf(ch)>=0)n+=2;else{gsm=false;break}}
+ var len=gsm?n:Array.from(text).reduce(function(a,c){return a+(c.codePointAt(0)>0xffff?2:1)},0),one=gsm?160:70,per=gsm?153:67;
+ return{encoding:gsm?'GSM-7':'UCS-2',characters:len,perSingle:one,perPart:per,segments:len===0?0:len<=one?1:Math.ceil(len/per)}}
+
+function rnd(s){return function(){s|=0;s=s+0x6D2B79F5|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function generateFarm(W,H,seed){var R=rnd(seed),P=[];
+ (function sp(x,y,w,h,d){if(d===0||(w<110&&h<110)){P.push({x:x,y:y,w:w,h:h});return}
+  if(w>h){var k=w*(.35+.3*R());sp(x,y,k,h,d-1);sp(x+k,y,w-k,h,d-1)}else{var k2=h*(.35+.3*R());sp(x,y,w,k2,d-1);sp(x,y+k2,w,h-k2,d-1)}})(0,0,W,H,6);
+ return P.map(function(p,i){var cx=p.x+p.w/2,cy=p.y+p.h/2;
+  var v=.62+.25*Math.sin(cx*.011+1)*Math.cos(cy*.014)+.12*Math.sin((cx+cy)*.008)+.08*(R()-.5);
+  v-=.5*Math.exp(-(Math.pow((cx-.72*W)/(.15*W),2)+Math.pow((cy-.66*H)/(.28*H),2)));
+  v-=.3*Math.exp(-(Math.pow((cx-.2*W)/(.12*W),2)+Math.pow((cy-.25*H)/(.25*H),2)));
+  var n=Math.max(.06,Math.min(.95,v));
+  return{id:String.fromCharCode(65+i%26)+(1+Math.floor(i/26)),rect:{x:Math.round(p.x),y:Math.round(p.y),w:Math.round(p.w),h:Math.round(p.h)},acres:+(p.w*p.h/2600).toFixed(1),ndvi:+n.toFixed(3),band:band(n)}})}
+var farms={demo:{id:'demo',canvas:{w:1000,h:600},parcels:generateFarm(1000,600,11)}};
+function getParcel(f,id){var F=farms[f];return F&&F.parcels.find(function(p){return p.id.toUpperCase()===String(id).toUpperCase()})}
+function worst(f){return farms[f].parcels.reduce(function(a,b){return b.ndvi<a.ndvi?b:a})}
+var farmers={};try{farmers=JSON.parse(localStorage.getItem('kd_farmers')||'{}')}catch(e){}
+function getFarmer(ph){return farmers[ph]||{lang:'en',farmId:'demo'}}
+function saveFarmer(ph,patch){farmers[ph]=Object.assign(getFarmer(ph),patch);try{localStorage.setItem('kd_farmers',JSON.stringify(farmers))}catch(e){}return farmers[ph]}
+
+var LEAVES={tomato:{name:'Tomato',d:'Early blight',p:91,a:'Remove affected lower leaves. Spray only infected plants, not the whole plot. Avoid watering from above.'},rice:{name:'Rice',d:'Nitrogen deficiency',p:87,a:'Yellowing from the tip inward. Apply a split dose of urea on the patch only. No pesticide needed.'},wheat:{name:'Wheat',d:'Yellow rust',p:89,a:'Orange-yellow stripes found. Ask your agriculture officer for the right fungicide and spray the patch within 2 days.'}};
+var LEAFT={hi:{tomato:{name:"टमाटर",d:"अगेती झुलसा (अर्ली ब्लाइट)",a:"नीचे की प्रभावित पत्तियाँ हटा दें। पूरे खेत पर नहीं, सिर्फ़ संक्रमित पौधों पर छिड़काव करें। ऊपर से पानी न दें।"},rice:{name:"धान",d:"नाइट्रोजन की कमी",a:"पत्ती की नोक से अंदर की ओर पीलापन है। सिर्फ़ उसी हिस्से में यूरिया की खुराक दो बार में बाँटकर दें। कीटनाशक की ज़रूरत नहीं।"},wheat:{name:"गेहूँ",d:"पीला रतुआ (येलो रस्ट)",a:"नारंगी-पीली धारियाँ मिली हैं। अपने कृषि अधिकारी से सही फफूंदनाशक पूछें और 2 दिन में उसी हिस्से पर छिड़कें।"}},
+mr:{tomato:{name:"टोमॅटो",d:"लवकर येणारा करपा (अर्ली ब्लाइट)",a:"खालची बाधित पाने काढून टाका. संपूर्ण प्लॉटवर नाही, फक्त बाधित झाडांवर फवारणी करा. वरून पाणी देऊ नका."},rice:{name:"भात",d:"नायट्रोजनची कमतरता",a:"पानाच्या टोकापासून आतपर्यंत पिवळेपणा आहे. फक्त त्याच भागात युरियाची मात्रा दोन भागांत विभागून द्या. कीटकनाशक नको."},wheat:{name:"गहू",d:"पिवळा तांबेरा (यलो रस्ट)",a:"केशरी-पिवळ्या रेषा आढळल्या आहेत. कृषी अधिकाऱ्यांकडून योग्य बुरशीनाशक विचारा आणि 2 दिवसांत त्याच भागावर फवारणी करा."}}};
+var NOTE={en:"Greenness from a single photo is a rough guide. Lighting and shadows change it.",hi:"एक फ़ोटो से हरेपन का अंदाज़ मोटा-मोटा ही होता है। रोशनी और परछाईं से नतीजा बदल सकता है।",mr:"एका फोटोवरून हिरवेपणाचा अंदाज ढोबळ असतो. प्रकाश आणि सावलीमुळे निकाल बदलू शकतो."};
+var COST={paddy:22000,cotton:28000,soybean:16000,wheat:20000};
+function savings(crop,acres){var per=COST[crop];if(!per)return null;var tot=acres*per,r=function(n){return Math.round(n/100)*100},lo=r(tot*.15),hi=r(tot*.2);return{crop:crop,acres:acres,perAcre:per,totalInputs:tot,saving:{low:lo,high:hi,mid:(lo+hi)/2},assumption:'Illustrative 15-20% target, not a measured result.'}}
+
+function analyseSource(src,lang){var W=640,H=480,C=12,Rr=9,c=document.createElement('canvas');c.width=W;c.height=H;var g=c.getContext('2d',{willReadFrequently:true});
+ var sw=src.naturalWidth||src.width,sh=src.naturalHeight||src.height,s=Math.max(W/sw,H/sh),iw=sw*s,ih=sh*s;g.drawImage(src,(W-iw)/2,(H-ih)/2,iw,ih);
+ var d=g.getImageData(0,0,W,H).data,bw=W/C,bh=H/Rr,B=[];
+ for(var j=0;j<Rr;j++)for(var i=0;i<C;i++){var e=0,n=0;for(var y=Math.floor(j*bh);y<(j+1)*bh;y+=3)for(var x=Math.floor(i*bw);x<(i+1)*bw;x+=3){var o=(y*W+x)*4,r=d[o],gg=d[o+1],b=d[o+2],t=r+gg+b+1;e+=2*gg/t-r/t-b/t;n++}
+  var v=Math.max(0,Math.min(1,(e/n+.02)/.2));B.push({id:String.fromCharCode(65+j)+(i+1),row:j,col:i,greenness:+v.toFixed(3),band:band(v)})}
+ var cnt={low:0,mid:0,high:0};B.forEach(function(b){cnt[b.band]++});var pc=function(k){return Math.round(cnt[k]/B.length*100)};
+ var w=B.reduce(function(a,b){return b.greenness<a.greenness?b:a});
+ return{grid:{cols:C,rows:Rr,width:W,height:H},summary:{healthyPct:pc('high'),watchPct:pc('mid'),stressedPct:pc('low')},weakestBlock:w,blocks:B,advice:adviceFor(w.greenness,lang),note:(NOTE[lang]||NOTE.en)}}
+
+var esc=function(s){return String(s).replace(/[<>&'"]/g,function(c){return{'<':'&lt;','>':'&gt;','&':'&amp;',"'":'&apos;','"':'&quot;'}[c]})};
+var twiml=function(x){return'<?xml version="1.0" encoding="UTF-8"?>\n<Response>'+x+'</Response>'};
+function detectLang(t,fb){var s=t.trim().toLowerCase();if(s==='en'||s==='english')return'en';if(s==='hi'||s==='hindi'||s==='हिंदी')return'hi';if(s==='mr'||s==='marathi'||s==='मराठी')return'mr';
+ if(/[\u0900-\u097F]/.test(t))return/शेताची|सांगा|आहे|द्या|नको/.test(t)?'mr':'hi';return fb}
+function xmlRes(s){return{status:200,type:'text/xml',body:s}}
+function webhook(path,b){var from=b.From||'unknown';
+ if(path==='/webhooks/voice')return xmlRes(twiml('<Gather numDigits="1" action="/webhooks/voice/advice" method="POST" timeout="6"><Say language="en-IN">Welcome to KhetDristi. For English press 1.</Say><Say language="hi-IN">हिंदी के लिए 2 दबाएँ।</Say><Say language="hi-IN">मराठीसाठी 3 दाबा.</Say></Gather><Redirect method="POST">/webhooks/voice/advice?Digits=1</Redirect>'));
+ if(path==='/webhooks/voice/advice'){var lang={1:'en',2:'hi',3:'mr'}[b.Digits||1]||'en',f=saveFarmer(from,{lang:lang}),text=parcelMessage(worst(f.farmId),lang),sl=VOICE[lang];
+  return xmlRes(twiml('<Say language="'+sl+'">'+esc(text)+'</Say><Pause length="1"/><Say language="'+sl+'">'+esc(text)+'</Say>'))}
+ if(path==='/webhooks/message'){var body=String(b.Body||''),wa=from.indexOf('whatsapp:')===0,fm=getFarmer(from),l=detectLang(body,fm.lang);saveFarmer(from,{lang:l});
+  var m=body.match(/\b([A-Za-z])\s?(\d{1,2})\b/),reply;
+  if(!m)reply=MENU[l];else{var p=getParcel(fm.farmId,m[1]+m[2]);if(!p)reply=NOTFOUND[l];else{saveFarmer(from,{lastParcel:p.id});reply=parcelMessage(p,l,true)}}
+  if(!wa)reply='KhetDristi: '+reply;return xmlRes(twiml('<Message>'+esc(reply)+'</Message>'))}
+ return{status:404,body:{error:'Not found'}}}
+
+function route(method,url,body){var u=new URL(url,'http://khet.local'),p=u.pathname.replace(/\/$/,''),q=u.searchParams,L=function(){return LANGS.indexOf(q.get('lang'))>=0?q.get('lang'):'en'},bad=function(m,c){return{status:c||400,body:{error:m}}},m;
+ if(method==='GET'&&p==='/health')return{status:200,body:{ok:true,engine:'in-page'}};
+ if(method==='GET'&&(m=p.match(/^\/api\/farms\/([^/]+)$/)))return farms[m[1]]?{status:200,body:farms[m[1]]}:bad('Farm not found',404);
+ if(method==='PUT'&&(m=p.match(/^\/api\/farms\/([^/]+)$/))){var pa=body&&body.parcels;if(!Array.isArray(pa)||!pa.every(function(x){return x.id&&isFinite(x.ndvi)}))return bad('parcels[] with id and ndvi required');
+  farms[m[1]]={id:m[1],canvas:body.canvas||{w:1000,h:600},parcels:pa.map(function(x){return Object.assign({},x,{band:band(x.ndvi)})})};return{status:200,body:farms[m[1]]}}
+ if(method==='GET'&&(m=p.match(/^\/api\/farms\/([^/]+)\/parcels\/([^/]+)$/))){var pc=getParcel(m[1],m[2]);if(!pc)return bad('Parcel not found',404);var l=L();return{status:200,body:Object.assign({},pc,{advice:adviceFor(pc.ndvi,l),message:parcelMessage(pc,l,true)})}}
+ if(method==='GET'&&(m=p.match(/^\/api\/farms\/([^/]+)\/parcels\/([^/]+)\/sms-cost$/))){var pr=getParcel(m[1],m[2]);if(!pr)return bad('Parcel not found',404);var k=band(pr.ndvi);
+  return{status:200,body:LANGS.map(function(l2){var t='KhetDristi: '+ADVICE[l2][k];return Object.assign({lang:l2,text:t},smsInfo(t))})}}
+ if(method==='GET'&&p==='/api/advice'){var v=Number(q.get('ndvi'));return q.get('ndvi')!==null&&isFinite(v)?{status:200,body:adviceFor(v,L())}:bad('ndvi query param required')}
+ if(method==='POST'&&p==='/api/sms/cost')return body&&typeof body.text==='string'?{status:200,body:smsInfo(body.text)}:bad('text required');
+ if(method==='GET'&&p==='/api/leaf/samples')return{status:200,body:Object.keys(LEAVES).map(function(k){return{key:k,name:LEAVES[k].name}})};
+ if(method==='POST'&&p==='/api/leaf/scan'){var lf=body&&LEAVES[body.sample],lt=lf?((LEAFT[L()]||{})[body.sample]||{}):{};return lf?{status:200,body:{sample:body.sample,crop:lt.name||lf.name,diagnosis:lt.d||lf.d,confidence:lf.p,advice:lt.a||lf.a,simulated:true}}:bad('sample must be one of: '+Object.keys(LEAVES).join(', '))}
+ if(method==='GET'&&p==='/api/savings'){var ac=Number(q.get('acres'));if(!(ac>=1&&ac<=1000))return bad('acres must be between 1 and 1000');var s=savings(String(q.get('crop')||'').toLowerCase(),ac);return s?{status:200,body:s}:bad('crop must be one of: '+Object.keys(COST).join(', '))}
+ if(method==='POST'&&p==='/api/photo/analyse'){if(!body||!body.source)return bad('body.source (image or canvas) required');try{return{status:200,body:analyseSource(body.source,L())}}catch(e){return bad('Could not read image',422)}}
+ if(method==='POST'&&p.indexOf('/webhooks/')===0){var form=body&&typeof body==='object'?body:{};if(q.get('Digits'))form=Object.assign({Digits:q.get('Digits')},form);return webhook(p,form)}
+ return bad('Not found',404)}
+
+var LOG=[];
+function request(method,url,body){var t0=performance.now(),r;try{r=route(String(method).toUpperCase(),url,body)}catch(e){r={status:500,body:{error:e.message}}}
+ var e2={time:new Date(),method:String(method).toUpperCase(),path:url,status:r.status,ms:+(performance.now()-t0).toFixed(1)};LOG.unshift(e2);if(LOG.length>30)LOG.pop();
+ try{window.dispatchEvent(new CustomEvent('khetapi',{detail:e2}))}catch(e3){}
+ return Promise.resolve(r)}
+window.KhetAPI={request:request,log:function(){return LOG.slice()},band:band};
+})();
+</script>
+
+<!-- ============ FRONTEND (now calling KhetAPI) ============ -->
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const api=window.KhetAPI,band=api.band;
+const call=async(m,u,b)=>(await api.request(m,u,b)).body;
+// UI labels only. All advice text, status, SMS cost, scan, savings come from the API.
+const T={en:{n:"Parcel",ac:"acres",sp:"Speak advice",sm:"Send as SMS",none:"No parcel picked yet. Tap the map."},
+hi:{n:"खेत",ac:"एकड़",sp:"सुनें",sm:"SMS भेजें",none:"अभी कोई खेत नहीं चुना। नक्शे पर टैप करें।"},
+mr:{n:"शेत",ac:"एकर",sp:"ऐका",sm:"SMS पाठवा",none:"अजून कोणतेही शेत निवडलेले नाही. नकाशावर टॅप करा."}};
+const VL={en:'en-IN',hi:'hi-IN',mr:'mr-IN'},NAMES={en:'English',hi:'हिंदी',mr:'मराठी'};let lang='en';
+const stops=[[0,[192,57,43]],[.3,[242,169,0]],[.55,[184,212,74]],[.75,[47,138,58]],[1,[20,96,47]]];
+function col(v,a=1){v=Math.max(0,Math.min(1,v));for(let i=1;i<stops.length;i++)if(v<=stops[i][0]){const A=stops[i-1],B=stops[i],t=(v-A[0])/(B[0]-A[0]);return`rgba(${A[1].map((c,k)=>Math.round(c+(B[1][k]-c)*t)).join(',')},${a})`}return'rgb(20,96,47)'}
+const bc={low:'#C0392B',mid:'#9a6c00',high:'#3F7F26'};
+// ---------- orbit lens ----------
+const cv=$('#cv'),ctx=cv.getContext('2d'),dpr=Math.min(2,devicePixelRatio||1);
+let W,H,P=[],nat,nv,lx=-999,ly=-999,r=0,touched=false,pin=null,vis=true;
+async function loadFarm(){const F=await call('GET','/api/farms/demo'),sx=W/F.canvas.w,sy=H/F.canvas.h;
+ P=F.parcels.map(p=>({x:p.rect.x*sx,y:p.rect.y*sy,w:p.rect.w*sx,h:p.rect.h*sy,v:p.ndvi,id:p.id,ac:p.acres}));
+ nat=layer(false);nv=layer(true)}
+async function build(){W=cv.clientWidth;H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;await loadFarm()}
+function layer(f){const c=document.createElement('canvas');c.width=W*dpr;c.height=H*dpr;const g=c.getContext('2d');g.scale(dpr,dpr);
+ P.forEach(p=>{const v=p.v;g.fillStyle=f?col(v):`rgb(${Math.round(140-v*80)},${Math.round(92+v*72)},${Math.round(52-v*10)})`;g.fillRect(p.x,p.y,p.w,p.h);
+  g.strokeStyle=f?'rgba(0,0,0,.1)':'rgba(0,0,0,.16)';g.lineWidth=1;const s=f?9:5;
+  g.beginPath();if(p.w>p.h)for(let x=p.x+s;x<p.x+p.w;x+=s){g.moveTo(x,p.y);g.lineTo(x,p.y+p.h)}else for(let y=p.y+s;y<p.y+p.h;y+=s){g.moveTo(p.x,y);g.lineTo(p.x+p.w,y)}g.stroke();
+  g.strokeStyle=f?'rgba(20,10,5,.55)':'rgba(236,224,190,.55)';g.lineWidth=3;g.strokeRect(p.x+1,p.y+1,p.w-2,p.h-2)});return c}
+function at(x,y){return P.find(p=>x>=p.x&&x<p.x+p.w&&y>=p.y&&y<p.y+p.h)}
+function draw(t){requestAnimationFrame(draw);if(!vis||!nat)return;
+ const tr=Math.min(1,t/1600);let tr2=1-Math.pow(1-tr,3);
+ if(!touched){lx=W*(.5+.3*Math.cos(t/1500));ly=H*(.5+.28*Math.sin(t/1100))}
+ const R0=(W<600?70:115)*tr2;r+=(R0-r)*.2;
+ ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);ctx.drawImage(nat,0,0,W,H);
+ ctx.save();ctx.beginPath();ctx.arc(lx,ly,r,0,7);ctx.clip();ctx.drawImage(nv,0,0,W,H);ctx.restore();
+ ctx.lineWidth=4;ctx.strokeStyle='#F2A900';ctx.beginPath();ctx.arc(lx,ly,r,0,7);ctx.stroke();
+ ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(lx-r-10,ly);ctx.lineTo(lx-r+14,ly);ctx.moveTo(lx+r-14,ly);ctx.lineTo(lx+r+10,ly);ctx.moveTo(lx,ly-r-10);ctx.lineTo(lx,ly-r+14);ctx.moveTo(lx,ly+r-14);ctx.lineTo(lx,ly+r+10);ctx.stroke();
+ if(pin){const cx=pin.x+pin.w/2,cy=pin.y+pin.h/2,k=(t/900)%1;ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.strokeRect(pin.x+4,pin.y+4,pin.w-8,pin.h-8);
+  ctx.strokeStyle=`rgba(255,255,255,${1-k})`;ctx.beginPath();ctx.arc(cx,cy,10+k*40,0,7);ctx.stroke();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(cx,cy,6,0,7);ctx.fill()}}
+function pt(e){const b=cv.getBoundingClientRect();return[e.clientX-b.left,e.clientY-b.top]}
+cv.addEventListener('pointermove',e=>{touched=true;[lx,ly]=pt(e);$('#cap').style.opacity=0});
+cv.addEventListener('pointerdown',e=>{touched=true;[lx,ly]=pt(e);pick(at(lx,ly))});
+new IntersectionObserver(e=>vis=e[0].isIntersecting).observe($('#stage'));
+addEventListener('resize',async()=>{const p=pin&&pin.id;await build();pin=P.find(q=>q.id===p)||null});
+const worstParcel=()=>P.reduce((a,b)=>b.v<a.v?b:a);
+// ---------- panel ----------
+let _au=null,_tok=0;
+function chunks(t){const parts=t.match(/[^.।!?]+[.।!?]*/g)||[t],o=[];let c='';for(const p of parts){if((c+p).length>170&&c){o.push(c.trim());c=p}else c+=p}if(c.trim())o.push(c.trim());return o.flatMap(x=>{const r=[];while(x.length>190){let k=x.lastIndexOf(' ',190);if(k<50)k=190;r.push(x.slice(0,k));x=x.slice(k)}r.push(x);return r})}
+function speakFallback(txt,vn){const tok=++_tok,list=chunks(txt),tl=lang==='en'?'en-IN':lang;let i=0;
+ if(_au){try{_au.pause()}catch(e){}}
+ const fail=()=>{if(tok===_tok)vn.textContent=UI[lang].nov};
+ const next=()=>{if(tok!==_tok||i>=list.length)return;
+  const a=new Audio('https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl='+tl+'&q='+encodeURIComponent(list[i++]));_au=a;a.onended=next;a.onerror=fail;
+  const pr=a.play();if(pr&&pr.catch)pr.catch(fail)};
+ vn.textContent='';next()}
+function speak(txt,el){const vn=el||$('#vn')||{};
+ const ok='speechSynthesis' in window&&typeof SpeechSynthesisUtterance!=='undefined';
+ if(!ok){speakFallback(txt,vn);return}
+ let started=false;
+ const go=()=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt),vs=speechSynthesis.getVoices();u.lang=VL[lang];
+  let v=vs.find(x=>x.lang.replace('_','-')===VL[lang])||vs.find(x=>x.lang.startsWith(lang));
+  if(!v&&lang==='mr'){v=vs.find(x=>x.lang.startsWith('hi'));u.lang='hi-IN';vn.textContent=UI[lang].nomr}else vn.textContent='';
+  if(v)u.voice=v;u.rate=.92;u.onstart=()=>{started=true};u.onerror=()=>{if(!started)speakFallback(txt,vn)};
+  speechSynthesis.speak(u);
+  setTimeout(()=>{if(!started&&!speechSynthesis.speaking){try{speechSynthesis.cancel()}catch(e){}speakFallback(txt,vn)}},1500)}catch(e){speakFallback(txt,vn)}};
+ if(speechSynthesis.getVoices().length)go();
+ else{let done=false;const once=()=>{if(done)return;done=true;speechSynthesis.onvoiceschanged=null;go()};speechSynthesis.onvoiceschanged=once;setTimeout(once,400)}}
+function pick(p){if(!p)return;pin=p;panel()}
+let pn=0;
+async function panel(){const t=T[lang];if(!pin){$('#pin').innerHTML=`<p class="mute">${t.none}</p>`;$('#act').innerHTML='';return}
+ const id=++pn,d=await call('GET',`/api/farms/demo/parcels/${pin.id}?lang=${lang}`);if(id!==pn)return;
+ const k=d.advice.band,txt=d.advice.text;
+ $('#pin').innerHTML=`<h3>${t.n} ${d.id}<span class="tag" style="background:${bc[k]}">${d.advice.status}</span></h3><p class="mute">NDVI ${d.ndvi.toFixed(2)}, about ${d.acres} ${t.ac}</p><p style="font-size:20px">${txt}</p>`;
+ $('#act').innerHTML=`<button class="btn" id="sb">${t.sp}</button><button class="btn o" onclick="document.getElementById('sms').scrollIntoView()">${t.sm}</button><p class="mute" id="vn"></p>`;
+ $('#sb').onclick=()=>speak(txt);sms(pin);playPhone()}
+$$('[data-l]').forEach(b=>b.onclick=()=>{lang=b.dataset.l;document.documentElement.lang=lang;applyLang();$$('[data-l]').forEach(x=>x.setAttribute('aria-pressed',x===b));panel();if(!pin)playPhone()});
+// ---------- privacy lines (follow the language switch) ----------
+const PRIV={en:{photo:'Privacy: your photo is processed only on this device. It is never uploaded or stored.',leaf:'Privacy: the leaf scan runs on this device. No photo or data is uploaded or stored.'},
+hi:{photo:'गोपनीयता: आपकी फ़ोटो सिर्फ़ इसी डिवाइस पर जाँची जाती है। उसे न अपलोड किया जाता है, न सहेजा जाता है।',leaf:'गोपनीयता: पत्ती की जाँच इसी डिवाइस पर होती है। कोई फ़ोटो या डेटा अपलोड या सहेजा नहीं जाता।'},
+mr:{photo:'गोपनीयता: तुमचा फोटो फक्त याच डिव्हाइसवर तपासला जातो. तो अपलोड किंवा साठवला जात नाही.',leaf:'गोपनीयता: पानाची तपासणी याच डिव्हाइसवर होते. कोणताही फोटो किंवा डेटा अपलोड किंवा साठवला जात नाही.'}};
+function setPriv(){$$('[data-priv]').forEach(e=>{e.textContent=PRIV[lang][e.dataset.priv];e.lang=lang})}
+
+let lastLeaf=false,lastPhoto=null;
+const UI={
+en:{choose:"Choose your language",title:"KhetDristi: hold a lens over your farm",aria:"Interactive farm map. Tap a parcel for advice.",
+h1:"Hold a lens over your farm.",
+sub:"Outside the circle, your fields as the eye sees them. Inside, the same fields as a satellite reads plant health. Tap a parcel and KhetDristi tells you what to do, out loud, in your language.",
+cap:"Move the lens. Tap a parcel.",stressed:"stressed",healthy:"healthy",
+ph_h:"The advice arrives on any phone",ph_lead:"The parcel you pinned on the map, delivered the way the farmer already communicates. Switch channel or language, then replay.",
+ch_ivr:"Voice call",ch_sms:"SMS",ch_wa:"WhatsApp",replay:"Replay",
+pf_h:"Try it on a real photo",pf_lead:"This is real computation, not a mock-up. Your photo is analysed in this browser using a greenness index (Excess Green) on each block. Nothing is uploaded, so it works the same with no network.",
+pf_choose:"Choose a field or leaf photo",pf_drop:"or drop one here",pf_sample:"Use a sample field instead",pf_empty:"Results appear here after you pick a photo. Best with a top-down or wide shot of crop rows.",
+lf_h:"Diagnose a leaf with no signal",lf_lead:"The scanner runs on a low-cost device at a Common Service Centre. Pick a sample and scan with the network switched off.",
+lf_off:"Network off",lf_scan:"Scan leaf",lf_empty:"Results appear here. Simulated output for this demo, not a real diagnosis.",
+lf_ready:"Ready to scan.",lf_scanning:"Scanning on this device…",lf_offline:"Offline result, no data used",lf_online:"Result ready, will sync when online",lf_conf:"Confidence",lf_sim:"Simulated for demo.",
+leaf:{tomato:"Tomato leaf",rice:"Rice leaf",wheat:"Wheat leaf"},crops:{paddy:"Paddy",cotton:"Cotton",soybean:"Soybean",wheat:"Wheat"},
+sm_h:"What this advice costs by SMS",sm_lead:"A feature phone gets one text of 160 plain characters. Hindi and Marathi switch to a different encoding with only 70 per message, so the same advice costs more. This is why KhetDristi also speaks.",
+sm_chars:(n,g)=>`${n} characters, ${g?"GSM-7 (160 per text)":"Unicode (70 per text)"}`,
+sv_h:"What precise inputs could save",sv_lead:"An illustration of the 15–20% input-cost target. Per-acre costs are rough assumptions, not measured results.",
+sv_size:"Farm size:",sv_acres:"acres",sv_note:"Seasonal spend on fertiliser, pesticide and extra irrigation.",sv_per:"Possible saving per season",
+sv_rng:(a,b,c)=>`Between ₹${a} and ₹${b} on ₹${c} of inputs`,
+fl_h:"How one answer is made",
+flow:[["1. Farmer reaches out","Call, SMS or WhatsApp"],["2. Gateway","Voice and chat via Twilio or Exotel"],["3. Two checks","Offline leaf scan and Sentinel-2 NDVI"],["4. Zone engine","Combines both with weather and soil"],["5. Reply","In the farmer's language, same thread"]],
+foot:"Team Neuronerds, A. P. Shah Institute of Technology. PCCOE International Grand Challenge 2026, AI for Climate Change. Farm map and sample photo are generated, advice rules are illustrative.",
+conn:n=>`Frontend connected to KhetAPI. ${n} calls so far.`,
+nov:"Voice is not supported in this browser. Open this page in Chrome or Safari.",nomr:"No Marathi voice on this device, using Hindi.",imgerr:"Could not read that image. Try a JPG or PNG.",
+ph_title:p=>`${p}% looks healthy`,ph_legend:(h,w,s)=>`healthy ${h}%, watch ${w}%, stressed ${s}%`,ph_weak:(id,g)=>`Weakest block is <b>${id}</b> (greenness ${g}).`},
+hi:{choose:"अपनी भाषा चुनें",title:"खेतदृष्टि: अपने खेत पर एक लेंस रखिए",aria:"खेत का इंटरैक्टिव नक्शा। सलाह के लिए किसी खेत पर टैप करें।",
+h1:"अपने खेत पर लेंस रखिए।",
+sub:"घेरे के बाहर आपके खेत वैसे दिखते हैं जैसे आँख से दिखते हैं। घेरे के अंदर वही खेत, जैसे सैटेलाइट फ़सल की सेहत पढ़ता है। किसी खेत पर टैप करें और खेतदृष्टि आपकी भाषा में बोलकर बताएगी कि क्या करना है।",
+cap:"लेंस हिलाइए। किसी खेत पर टैप करें।",stressed:"कमज़ोर",healthy:"स्वस्थ",
+ph_h:"सलाह किसी भी फ़ोन पर पहुँचती है",ph_lead:"नक्शे पर चुना हुआ खेत, उसी तरह किसान तक पहुँचता है जैसे वह रोज़ बात करता है। चैनल या भाषा बदलिए, फिर दोबारा चलाइए।",
+ch_ivr:"फ़ोन कॉल",ch_sms:"SMS",ch_wa:"WhatsApp",replay:"दोबारा चलाएँ",
+pf_h:"असली फ़ोटो पर आज़माइए",pf_lead:"यह असली गणना है, दिखावटी नहीं। आपकी फ़ोटो इसी ब्राउज़र में, हर हिस्से पर हरेपन के सूचकांक (Excess Green) से जाँची जाती है। कुछ भी अपलोड नहीं होता, इसलिए बिना नेटवर्क के भी यही चलता है।",
+pf_choose:"खेत या पत्ती की फ़ोटो चुनें",pf_drop:"या यहाँ छोड़ दें",pf_sample:"इसके बजाय नमूना खेत इस्तेमाल करें",pf_empty:"फ़ोटो चुनने के बाद नतीजे यहाँ दिखेंगे। फ़सल की कतारों की ऊपर से या चौड़ी फ़ोटो सबसे अच्छी रहती है।",
+lf_h:"बिना सिग्नल के पत्ती की जाँच",lf_lead:"स्कैनर कॉमन सर्विस सेंटर के एक सस्ते डिवाइस पर चलता है। नमूना चुनिए और नेटवर्क बंद करके स्कैन कीजिए।",
+lf_off:"नेटवर्क बंद",lf_scan:"पत्ती स्कैन करें",lf_empty:"नतीजे यहाँ दिखेंगे। यह डेमो के लिए बना नमूना नतीजा है, असली जाँच नहीं।",
+lf_ready:"स्कैन के लिए तैयार।",lf_scanning:"इसी डिवाइस पर स्कैन हो रहा है…",lf_offline:"ऑफ़लाइन नतीजा, कोई डेटा इस्तेमाल नहीं हुआ",lf_online:"नतीजा तैयार, नेटवर्क आने पर सिंक होगा",lf_conf:"भरोसा",lf_sim:"डेमो के लिए नमूना।",
+leaf:{tomato:"टमाटर की पत्ती",rice:"धान की पत्ती",wheat:"गेहूँ की पत्ती"},crops:{paddy:"धान",cotton:"कपास",soybean:"सोयाबीन",wheat:"गेहूँ"},
+sm_h:"इस सलाह का SMS में कितना खर्च",sm_lead:"साधारण फ़ोन पर 160 सादे अक्षरों का एक संदेश जाता है। हिंदी और मराठी दूसरी एन्कोडिंग में जाती हैं, जिसमें एक संदेश में सिर्फ़ 70 अक्षर होते हैं, इसलिए वही सलाह ज़्यादा SMS में जाती है। इसीलिए खेतदृष्टि बोलकर भी बताती है।",
+sm_chars:(n,g)=>`${n} अक्षर, ${g?"GSM-7 (एक SMS में 160)":"यूनिकोड (एक SMS में 70)"}`,
+sv_h:"सटीक इनपुट से कितनी बचत हो सकती है",sv_lead:"इनपुट-लागत में 15–20% की कमी के लक्ष्य का उदाहरण। प्रति एकड़ लागत मोटे अनुमान हैं, मापे हुए नतीजे नहीं।",
+sv_size:"खेत का आकार:",sv_acres:"एकड़",sv_note:"खाद, कीटनाशक और अतिरिक्त सिंचाई पर मौसम भर का खर्च।",sv_per:"प्रति मौसम संभावित बचत",
+sv_rng:(a,b,c)=>`₹${c} के इनपुट पर ₹${a} से ₹${b} के बीच`,
+fl_h:"एक जवाब कैसे बनता है",
+flow:[["1. किसान संपर्क करता है","कॉल, SMS या WhatsApp"],["2. गेटवे","Twilio या Exotel से वॉइस और चैट"],["3. दो जाँचें","ऑफ़लाइन पत्ती स्कैन और Sentinel-2 NDVI"],["4. ज़ोन इंजन","मौसम और मिट्टी के साथ दोनों को मिलाता है"],["5. जवाब","किसान की भाषा में, उसी चैट में"]],
+foot:"टीम Neuronerds, ए. पी. शाह इंस्टिट्यूट ऑफ़ टेक्नोलॉजी। PCCOE इंटरनेशनल ग्रैंड चैलेंज 2026, जलवायु परिवर्तन के लिए AI। खेत का नक्शा और नमूना फ़ोटो बनाए हुए हैं, सलाह के नियम उदाहरण मात्र हैं।",
+conn:n=>`फ्रंटएंड KhetAPI से जुड़ा है। अब तक ${n} कॉल।`,
+nov:"इस ब्राउज़र में आवाज़ समर्थित नहीं है। इस पेज को Chrome या Safari में खोलें।",nomr:"इस डिवाइस पर मराठी आवाज़ नहीं है, हिंदी इस्तेमाल हो रही है।",imgerr:"वह फ़ोटो पढ़ी नहीं जा सकी। JPG या PNG आज़माइए।",
+ph_title:p=>`${p}% स्वस्थ दिख रहा है`,ph_legend:(h,w,s)=>`स्वस्थ ${h}%, नज़र रखें ${w}%, कमज़ोर ${s}%`,ph_weak:(id,g)=>`सबसे कमज़ोर हिस्सा <b>${id}</b> है (हरापन ${g})।`},
+mr:{choose:"तुमची भाषा निवडा",title:"खेतदृष्टी: तुमच्या शेतावर एक भिंग धरा",aria:"शेताचा इंटरॅक्टिव्ह नकाशा. सल्ल्यासाठी एखाद्या शेतावर टॅप करा.",
+h1:"तुमच्या शेतावर भिंग धरा.",
+sub:"वर्तुळाबाहेर तुमची शेते डोळ्यांना जशी दिसतात तशी. वर्तुळाच्या आत तीच शेते, उपग्रह जसे पिकाचे आरोग्य वाचतो तशी. एखाद्या शेतावर टॅप करा आणि खेतदृष्टी तुमच्या भाषेत बोलून काय करायचे ते सांगेल.",
+cap:"भिंग हलवा. एखाद्या शेतावर टॅप करा.",stressed:"कमकुवत",healthy:"निरोगी",
+ph_h:"सल्ला कोणत्याही फोनवर पोहोचतो",ph_lead:"नकाशावर निवडलेले शेत, शेतकरी रोज ज्या पद्धतीने संवाद साधतो त्याच पद्धतीने त्याच्यापर्यंत पोहोचते. चॅनेल किंवा भाषा बदला, मग पुन्हा चालवा.",
+ch_ivr:"फोन कॉल",ch_sms:"SMS",ch_wa:"WhatsApp",replay:"पुन्हा चालवा",
+pf_h:"खऱ्या फोटोवर करून पहा",pf_lead:"ही खरी गणना आहे, नुसता देखावा नाही. तुमचा फोटो याच ब्राउझरमध्ये, प्रत्येक भागावर हिरवेपणाच्या निर्देशांकाने (Excess Green) तपासला जातो. काहीही अपलोड होत नाही, त्यामुळे नेटवर्कशिवायही हे असेच चालते.",
+pf_choose:"शेताचा किंवा पानाचा फोटो निवडा",pf_drop:"किंवा इथे टाका",pf_sample:"त्याऐवजी नमुना शेत वापरा",pf_empty:"फोटो निवडल्यावर निकाल इथे दिसतील. पिकाच्या ओळींचा वरून घेतलेला किंवा रुंद फोटो सर्वात चांगला.",
+lf_h:"सिग्नलशिवाय पानाची तपासणी",lf_lead:"स्कॅनर कॉमन सर्व्हिस सेंटरमधील स्वस्त डिव्हाइसवर चालतो. नमुना निवडा आणि नेटवर्क बंद करून स्कॅन करा.",
+lf_off:"नेटवर्क बंद",lf_scan:"पान स्कॅन करा",lf_empty:"निकाल इथे दिसतील. हा डेमोसाठीचा नमुना निकाल आहे, खरी तपासणी नाही.",
+lf_ready:"स्कॅनसाठी तयार.",lf_scanning:"याच डिव्हाइसवर स्कॅन होत आहे…",lf_offline:"ऑफलाइन निकाल, कोणताही डेटा वापरला नाही",lf_online:"निकाल तयार, नेटवर्क आल्यावर सिंक होईल",lf_conf:"खात्री",lf_sim:"डेमोसाठी नमुना.",
+leaf:{tomato:"टोमॅटोचे पान",rice:"भाताचे पान",wheat:"गव्हाचे पान"},crops:{paddy:"भात",cotton:"कापूस",soybean:"सोयाबीन",wheat:"गहू"},
+sm_h:"या सल्ल्याला SMS मध्ये किती खर्च येतो",sm_lead:"साध्या फोनवर 160 साध्या अक्षरांचा एक संदेश जातो. हिंदी आणि मराठी वेगळ्या एन्कोडिंगमध्ये जातात, ज्यात एका संदेशात फक्त 70 अक्षरे बसतात, म्हणून तोच सल्ला जास्त SMS मध्ये जातो. म्हणूनच खेतदृष्टी बोलूनही सांगते.",
+sm_chars:(n,g)=>`${n} अक्षरे, ${g?"GSM-7 (एका SMS मध्ये 160)":"युनिकोड (एका SMS मध्ये 70)"}`,
+sv_h:"अचूक निविष्ठांमुळे किती बचत होऊ शकते",sv_lead:"निविष्ठा खर्चात 15–20% कपातीच्या उद्दिष्टाचे उदाहरण. प्रति एकर खर्च ढोबळ अंदाज आहेत, मोजलेले निकाल नाहीत.",
+sv_size:"शेताचा आकार:",sv_acres:"एकर",sv_note:"खत, कीटकनाशक आणि अतिरिक्त सिंचनावर हंगामभरातला खर्च.",sv_per:"प्रति हंगाम संभाव्य बचत",
+sv_rng:(a,b,c)=>`₹${c} च्या निविष्ठांवर ₹${a} ते ₹${b} दरम्यान`,
+fl_h:"एक उत्तर कसे तयार होते",
+flow:[["1. शेतकरी संपर्क करतो","कॉल, SMS किंवा WhatsApp"],["2. गेटवे","Twilio किंवा Exotel द्वारे व्हॉइस आणि चॅट"],["3. दोन तपासण्या","ऑफलाइन पान स्कॅन आणि Sentinel-2 NDVI"],["4. झोन इंजिन","हवामान आणि मातीसह दोन्हींचा मेळ घालते"],["5. उत्तर","शेतकऱ्याच्या भाषेत, त्याच चॅटमध्ये"]],
+foot:"टीम Neuronerds, ए. पी. शाह इन्स्टिट्यूट ऑफ टेक्नॉलॉजी. PCCOE इंटरनॅशनल ग्रँड चॅलेंज 2026, हवामान बदलासाठी AI. शेताचा नकाशा आणि नमुना फोटो तयार केलेले आहेत, सल्ल्याचे नियम उदाहरणादाखल आहेत.",
+conn:n=>`फ्रंटएंड KhetAPI शी जोडलेले आहे. आतापर्यंत ${n} कॉल.`,
+nov:"या ब्राउझरमध्ये आवाज समर्थित नाही. हे पेज Chrome किंवा Safari मध्ये उघडा.",nomr:"या डिव्हाइसवर मराठी आवाज नाही, हिंदी वापरत आहे.",imgerr:"तो फोटो वाचता आला नाही. JPG किंवा PNG वापरून पहा.",
+ph_title:p=>`${p}% निरोगी दिसत आहे`,ph_legend:(h,w,s)=>`निरोगी ${h}%, लक्ष ठेवा ${w}%, कमकुवत ${s}%`,ph_weak:(id,g)=>`सर्वात कमकुवत भाग <b>${id}</b> आहे (हिरवेपणा ${g}).`}};
+function applyLang(){const u=UI[lang];document.title=u.title;cv.setAttribute('aria-label',u.aria);
+ $$('[data-i]').forEach(e=>{const v=u[e.dataset.i];if(typeof v==='string')e.textContent=v});
+ $$('#crop option').forEach(o=>o.textContent=u.crops[o.value]);
+ $$('#flow div').forEach((d,i)=>d.innerHTML='<b>'+u.flow[i][0]+'</b>'+u.flow[i][1]);
+ setPriv();leafBtns();$('#conn').textContent=u.conn(calls);sv();
+ if(P.length)sms();
+ if(lastLeaf)call('POST','/api/leaf/scan?lang='+lang,{sample:lf}).then(renderLeaf);
+ if(lastPhoto)analyse(lastPhoto)}
+// ---------- SMS cost (API: /sms-cost) ----------
+async function sms(p){p=p||pin||worstParcel();const list=await call('GET',`/api/farms/demo/parcels/${p.id}/sms-cost`);
+ $('#sms').innerHTML=list.map(x=>{const n=x.segments,g=x.encoding==='GSM-7';
+ return`<div class="row"><b>${NAMES[x.lang]}</b><div><div class="msg" lang="${x.lang}">${x.text}</div><div class="mute">${UI[lang].sm_chars(x.characters,g)}</div></div><div><div class="big">${n} SMS</div><div class="seg-bar">${Array.from({length:n},(_,i)=>`<i style="animation-delay:${i*.1}s"></i>`).join('')}</div></div></div>`}).join('')}
+// ---------- photo analysis (API: /api/photo/analyse) ----------
+const out=$('#out'),oc=out.getContext('2d');
+async function analyse(img){lastPhoto=img;const u=UI[lang],t=T[lang],b=await call('POST','/api/photo/analyse?lang='+lang,{source:img});
+ if(b.error){$('#res').innerHTML=`<p class="mute">${b.error}</p>`;return}
+ const w=b.grid.width,h=b.grid.height,bw=w/b.grid.cols,bh=h/b.grid.rows;oc.clearRect(0,0,w,h);
+ const sw=img.naturalWidth||img.width,sh=img.naturalHeight||img.height,s=Math.max(w/sw,h/sh);oc.drawImage(img,(w-sw*s)/2,(h-sh*s)/2,sw*s,sh*s);
+ b.blocks.forEach((k,i)=>setTimeout(()=>{oc.fillStyle=col(k.greenness,.6);oc.fillRect(k.col*bw+1,k.row*bh+1,bw-2,bh-2)},i*14));
+ const sm=b.summary,wk=b.weakestBlock;
+ $('#res').innerHTML=`<h3>${u.ph_title(sm.healthyPct)}</h3><div class="bars"><i style="background:#3F7F26" data-w="${sm.healthyPct}"></i><i style="background:#F2A900" data-w="${sm.watchPct}"></i><i style="background:#C0392B" data-w="${sm.stressedPct}"></i></div><p class="mute">${u.ph_legend(sm.healthyPct,sm.watchPct,sm.stressedPct)}</p><p>${u.ph_weak(wk.id,wk.greenness.toFixed(2))} ${b.advice.text}</p><button class="btn" id="rs">${t.sp}</button><p class="mute" id="vn"></p><p class="mute">${b.note}</p>`;
+ requestAnimationFrame(()=>requestAnimationFrame(()=>$$('.bars i').forEach(i=>i.style.width=i.dataset.w+'%')));$('#rs').onclick=()=>speak(b.advice.text,$('#res #vn'))}
+function load(f){if(!f)return;const im=new Image();im.onload=()=>analyse(im);im.onerror=()=>{$('#res').innerHTML=`<p class="mute">${UI[lang].imgerr}</p>`};im.src=URL.createObjectURL(f)}
+$('#file').onchange=e=>load(e.target.files[0]);
+['dragover','dragleave','drop'].forEach(n=>$('#drop').addEventListener(n,e=>{e.preventDefault();$('#drop').classList.toggle('h',n==='dragover');if(n==='drop')load(e.dataTransfer.files[0])}));
+$('#sample').onclick=()=>{if(!nat)return;const c=document.createElement('canvas');c.width=640;c.height=480;c.getContext('2d').drawImage(nat,0,0,nat.width,nat.height,0,0,640,480);analyse(c)};
+// ---------- phone (SMS and WhatsApp go through the /webhooks/message gateway) ----------
+const scr=$('#scr'),wait=ms=>new Promise(r=>setTimeout(r,ms));let chan='ivr',run=0;
+const ASK={en:z=>`How is parcel ${z}?`,hi:z=>`${z} खेत का हाल बताओ`,mr:z=>`${z} शेताची स्थिती सांगा`};
+const PN={en:{ivr:"A voice call in the farmer's language. Works on any feature phone over 2G.",sms:'A short text, readable on the simplest handset.',wa:'A chat that replies on the same thread, no extra step.'},hi:{ivr:'किसान की भाषा में फ़ोन कॉल। 2G पर साधारण फ़ोन में चलता है।',sms:'छोटा संदेश, सबसे साधारण फ़ोन पर भी पढ़ा जा सकता है।',wa:'उसी चैट में जवाब, कोई अतिरिक्त कदम नहीं।'},mr:{ivr:'शेतकऱ्याच्या भाषेत फोन कॉल. 2G वर साध्या फोनवर चालतो.',sms:'छोटा संदेश, साध्या फोनवरही वाचता येतो.',wa:'त्याच चॅटमध्ये उत्तर, वेगळी कृती नाही.'}};
+async function viaGateway(ch,body){const from=(ch==='wa'?'whatsapp:':'')+'+919800000001';
+ await api.request('POST','/webhooks/message',{From:from,Body:lang});
+ const x=(await api.request('POST','/webhooks/message',{From:from,Body:body})).body;
+ const d=new DOMParser().parseFromString(x,'text/xml'),m=d.getElementsByTagName('Message')[0];return m?m.textContent:''}
+async function playPhone(){const id=++run,ok=()=>id===run,t=T[lang];if(!P.length)return;const z=pin||worstParcel();
+ scr.className='scr';void scr.offsetWidth;scr.className='scr in';$('#pnote').textContent=PN[lang][chan];
+ if(chan==='ivr'){const a=(await call('GET',`/api/farms/demo/parcels/${z.id}?lang=${lang}`)).advice;if(!ok())return;const txt=a.text;
+  scr.innerHTML=`<b>KhetDristi</b><span style="font-size:13px">${t.n} ${z.id}</span><div class="wave" id="wv">${'<i></i>'.repeat(14)}</div><div id="cap2" style="flex:1;overflow:hidden"></div>`;
+  $$('#wv i').forEach((e,i)=>e.style.animationDelay=i*.07+'s');let s='';for(const x of txt.split(' ')){if(!ok())return;s+=x+' ';$('#cap2').textContent=s;await wait(190)}if(ok())$('#wv').classList.add('off')}
+ else if(chan==='sms'){const m=await viaGateway('sms',z.id);if(!ok())return;scr.innerHTML=`<b>SMS</b><div class="bub sm"></div>`;scr.querySelector('.bub').textContent=m}
+ else{scr.innerHTML=`<b>WhatsApp</b><div class="bub me">${ASK[lang](z.id)}</div>`;const mp=viaGateway('wa',ASK[lang](z.id));await wait(500);if(!ok())return;scr.insertAdjacentHTML('beforeend','<div class="bub dots" id="tp"><span></span><span></span><span></span></div>');await wait(1100);const m=await mp;if(!ok())return;const tp=$('#tp');if(tp)tp.remove();const b=document.createElement('div');b.className='bub';b.textContent=m;scr.appendChild(b)}}
+$$('[data-c]').forEach(b=>b.onclick=()=>{chan=b.dataset.c;$$('[data-c]').forEach(x=>x.setAttribute('aria-pressed',x===b));playPhone()});$('#play').onclick=playPhone;
+// ---------- leaf scanner (API: /api/leaf/scan) ----------
+const LV={tomato:{n:'Tomato',c:'#4f8a3c',sp:[[50,60,9],[75,90,12],[58,115,7]],sc:'#5b3a22'},rice:{n:'Rice',c:'#9db24a',sp:[],sc:''},wheat:{n:'Wheat',c:'#6f9c3e',sp:[[48,55,4],[70,62,4],[56,80,4],[74,100,4],[52,118,4]],sc:'#d29a1f'}};let lf='tomato';
+function drawLeaf(){const l=LV[lf];$('#leaf').innerHTML=`<path d="M60 8C100 38 108 100 60 152C12 100 20 38 60 8Z" fill="${l.c}"/><path d="M60 14V150M60 50L36 72M60 80L86 100M60 108L38 126" stroke="#2B1B14" stroke-opacity=".25" stroke-width="2" fill="none"/>${l.sp.map(s=>`<circle cx="${s[0]}" cy="${s[1]}" r="${s[2]}" fill="${l.sc}" opacity=".85"/>`).join('')}`;$$('#leafs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===lf))}
+function leafBtns(){$('#leafs').innerHTML=Object.keys(LV).map(k=>`<button data-k="${k}">${UI[lang].leaf[k]}</button>`).join('');
+$$('#leafs button').forEach(b=>b.onclick=()=>{lf=b.dataset.k;lastLeaf=false;drawLeaf();$('#sres').innerHTML=`<p class="mute" data-i="lf_ready">${UI[lang].lf_ready}</p>`});drawLeaf()}
+function renderLeaf(d){const u=UI[lang];if(d.error){$('#sres').innerHTML=`<p class="mute">${d.error}</p>`;return}
+ $('#sres').innerHTML=`<div class="mute">${$('#off').checked?u.lf_offline:u.lf_online}</div><h3>${d.diagnosis}</h3><div class="mute">${u.lf_conf} ${d.confidence}%</div><div class="cbar"><i id="cf"></i></div><p>${d.advice}</p><button class="btn" id="lsp">${T[lang].sp}</button><p class="mute" id="lvn"></p><p class="mute">${u.lf_sim}</p>`;
+ $('#lsp').onclick=()=>speak(d.diagnosis+'. '+d.advice,$('#lvn'));
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{const c=$('#cf');if(c)c.style.width=d.confidence+'%'}))}
+$('#scanBtn').onclick=async()=>{const st=$('#lstage');st.classList.remove('go');void st.offsetWidth;st.classList.add('go');$('#sres').innerHTML=`<p class="mute" data-i="lf_scanning">${UI[lang].lf_scanning}</p>`;
+ const [d]=await Promise.all([call('POST','/api/leaf/scan?lang='+lang,{sample:lf}),wait(1450)]);lastLeaf=true;renderLeaf(d)};drawLeaf();
+// ---------- savings (API: /api/savings) + flow ----------
+async function sv(){const a=+$('#ac').value,c=$('#crop').value;$('#acv').textContent=a;const d=await call('GET',`/api/savings?crop=${c}&acres=${a}`);if(d.error)return;
+ const mid=d.saving.mid,el=$('#sv'),from=+el.dataset.v||0;el.dataset.v=mid;const t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/600),e=1-Math.pow(1-p,3);el.textContent='₹'+Math.round(from+(mid-from)*e).toLocaleString('en-IN');if(p<1)requestAnimationFrame(f)})(t0);
+ $('#rng').textContent=UI[lang].sv_rng(d.saving.low.toLocaleString('en-IN'),d.saving.high.toLocaleString('en-IN'),d.totalInputs.toLocaleString('en-IN'))}
+$('#ac').oninput=sv;$('#crop').onchange=sv;sv();
+let fi=0;const fl=$$('#flow div');setInterval(()=>{fl.forEach((d,i)=>d.classList.toggle('on',i===fi));fi=(fi+1)%fl.length},1400);
+// ---------- connection indicator ----------
+let calls=0;addEventListener('khetapi',()=>{calls++;$('#conn').textContent=UI[lang].conn(calls)});
+// ---------- start ----------
+applyLang();build().then(()=>{panel();playPhone();sms()});requestAnimationFrame(draw);
+</script></body></html>
